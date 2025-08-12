@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Curso de Inducción Corporativa – Estrategia Empresarial de Chacomer S.A.E. (interactivo)" />
+  <title>Curso Interactivo – Estrategia Empresarial | Chacomer</title>
+  <style>
+    :root {
+      --bg-start: #1e3c72; --bg-end: #2a5298; --glass: rgba(255,255,255,.12);
+      --glass-2: rgba(255,255,255,.2); --text: #fff; --accent: #ffd93d; --accent-2: #4ecdc4;
+      --danger: #ff6b6b; --success: #4caf50; --muted: rgba(255,255,255,.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;color:var(--text);background:linear-gradient(135deg,var(--bg-start),var(--bg-end));overflow:hidden}
+
+    /* Top bar */
+    .topbar{position:fixed;top:0;left:0;right:0;padding:12px 18px;display:flex;gap:16px;align-items:center;z-index:1000;backdrop-filter:blur(10px);background:linear-gradient(0deg,rgba(0,0,0,.25),rgba(0,0,0,.10))}
+    .brand{display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,.25);font-weight:700;letter-spacing:.4px}
+    .brand-badge{width:32px;height:32px;border-radius:8px;background:var(--glass-2);display:grid;place-items:center;font-size:.9rem}
+    .progress-wrap{flex:1}
+    .progress{width:100%;height:8px;border-radius:999px;background:rgba(255,255,255,.15);overflow:hidden;border:1px solid rgba(255,255,255,.25)}
+    .progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .35s ease}
+    .slide-counter{padding:6px 12px;border-radius:999px;background:rgba(0,0,0,.45);font-size:.9rem;border:1px solid rgba(255,255,255,.22)}
+
+    /* Slides */
+    .presentation-container{position:relative;width:100vw;height:100vh;display:flex;flex-direction:column}
+    .slides{position:absolute;inset:0;top:56px;overflow:hidden}
+    .slide{display:none;height:calc(100vh - 56px);padding:clamp(18px,5vw,46px);overflow-y:auto;animation:slideIn .45s ease}
+    .slide.active{display:flex;flex-direction:column;gap:16px}
+    @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+    @media (prefers-reduced-motion:reduce){.slide{animation:none!important}.progress-bar{transition:none!important}}
+
+    .slide-header{text-align:center;margin-bottom:8px}
+    .slide-title{font-size:clamp(1.6rem,3vw+1rem,2.7rem);font-weight:800;margin:0 0 6px;text-shadow:2px 2px 4px rgba(0,0,0,.25)}
+    .slide-subtitle{font-size:clamp(1rem,.8vw+.8rem,1.15rem);opacity:.9;font-weight:300}
+    .slide-content{max-width:1100px;margin:0 auto;text-align:center}
+
+    .logo-placeholder{width:140px;height:64px;background:rgba(255,255,255,.2);border-radius:12px;display:grid;place-items:center;margin:0 auto 12px;font-weight:800;border:1px solid rgba(255,255,255,.28)}
+
+    .module-card{background:var(--glass);backdrop-filter:blur(10px);border-radius:16px;padding:20px;margin:12px 0;border:1px solid rgba(255,255,255,.22);transition:transform .25s ease, box-shadow .25s ease}
+    .module-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.25)}
+    .module-title{font-size:1.22rem;color:var(--accent);margin:0 0 8px}
+    .module-number{display:inline-grid;place-items:center;background:var(--danger);color:#fff;width:50px;height:50px;border-radius:50%;font-weight:800;margin:0 auto 8px}
+    .module-duration{background:rgba(255,255,255,.18);padding:6px 14px;border-radius:999px;font-size:.95rem;display:inline-block;border:1px solid rgba(255,255,255,.25)}
+
+    .values-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:10px 0}
+    .value-card{text-align:left;background:rgba(255,255,255,.16);padding:16px;border-radius:12px;border-left:6px solid var(--accent)}
+    .value-title{font-size:1.06rem;color:var(--accent);margin-bottom:6px;font-weight:800}
+    .value-description{font-size:.98rem;line-height:1.55}
+
+    .timeline{display:flex;flex-direction:column;gap:12px;max-width:880px;margin:0 auto}
+    .timeline-item{display:flex;align-items:center;background:rgba(255,255,255,.1);padding:12px;border-radius:12px;border-left:4px solid var(--accent-2);text-align:left}
+    .timeline-number{background:var(--accent-2);color:#fff;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-weight:800;margin-right:10px}
+    .timeline-title{font-weight:800;margin-bottom:4px}
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+    .tab-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:999px;color:#fff;cursor:pointer}
+    .tab-btn.active{background:var(--accent);color:#000;font-weight:700}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    /* Expanders */
+    .expander{display:flex;align-items:center;gap:8px;width:100%;text-align:left;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.25);color:#fff;padding:10px 14px;border-radius:10px;cursor:pointer}
+    .expander[aria-expanded="true"]{background:rgba(0,0,0,.45)}
+    .expander + .expander-content{display:none;text-align:left;padding:12px 14px;background:rgba(255,255,255,.1);border-left:3px solid var(--accent-2);border-radius:0 10px 10px 10px}
+    .expander[aria-expanded="true"] + .expander-content{display:block}
+
+    /* Callouts */
+    .callout{background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.25);border-left:4px solid var(--accent);padding:12px 14px;border-radius:10px;text-align:left}
+    .muted{color:var(--muted)}
+
+    /* Bottom navigation */
+    .navigation{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:1000}
+    .nav-btn{background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3);color:#fff;padding:10px 18px;border-radius:999px;cursor:pointer;font-size:1rem;transition:all .2s ease;backdrop-filter:blur(10px)}
+    .nav-btn:hover{background:rgba(255,255,255,.3);transform:translateY(-1px)}
+    .nav-btn:disabled{opacity:.55;cursor:not-allowed}
+    .dots{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:900}
+    .dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.5);cursor:pointer}
+    .dot.active{background:var(--accent);transform:scale(1.2)}
+
+    /* Quiz */
+    .quiz{max-width:900px;margin:0 auto;text-align:left}
+    .quiz-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28)}
+    .q-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:16px;margin:12px 0}
+    .q-title{font-weight:700;margin-bottom:8px}
+    .choices{display:grid;gap:8px}
+    .choice{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.25);cursor:pointer;background:rgba(0,0,0,.25)}
+    .choice.correct{border-color:#2ecc71;box-shadow:0 0 0 2px rgba(46,204,113,.35) inset}
+    .choice.incorrect{border-color:#e74c3c;box-shadow:0 0 0 2px rgba(231,76,60,.35) inset}
+    .q-actions{display:flex;gap:10px;margin-top:10px}
+    .pill{padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.2);color:#fff;cursor:pointer}
+    .result{padding:14px;border-radius:12px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.25);margin-top:14px}
+    .success{border-left:4px solid #2ecc71}
+    .fail{border-left:4px solid #e74c3c}
+    .explain{font-size:.95rem;color:var(--muted);margin-top:6px}
+
+    /* Print certificate minimal */
+    @media print{
+      .topbar,.navigation,.dots{display:none!important}
+      body{background:#fff;color:#000}
+      .slide{height:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="presentation-container" role="application" aria-roledescription="presentación" aria-label="Curso Interactivo – Estrategia Empresarial">
+    <!-- Top bar -->
+    <div class="topbar">
+      <div class="brand"><div class="brand-badge">C</div>CHACOMER</div>
+      <div class="progress-wrap"><div class="progress" aria-label="Progreso del curso"><div class="progress-bar" id="progressBar"></div></div></div>
+      <div class="slide-counter" aria-live="polite"><span id="currentSlide">1</span>/<span id="totalSlides">12</span></div>
+    </div>
+
+    <div class="slides" id="slides">
+      <!-- 1. Portada -->
+      <section class="slide active" data-title="Portada" tabindex="0">
+        <div class="slide-content">
+          <div class="logo-placeholder" aria-label="Logo">CHACOMER</div>
+          <div class="slide-header">
+            <h1 class="slide-title">ESTRATEGIA EMPRESARIAL</h1>
+            <p class="slide-subtitle">Curso de Inducción Corporativa – Versión Interactiva</p>
+          </div>
+          <div class="module-card">
+            <h3 class="module-title">¿Cómo usar este curso?</h3>
+            <p>Avanza con los botones inferiores, con flechas del teclado o deslizando en móvil. Presiona <strong>“Más información”</strong> en cada módulo para ejemplos y buenas prácticas.</p>
+          </div>
+          <p class="muted">Progreso y calificaciones se guardan localmente en tu navegador.</p>
+        </div>
+      </section>
+
+      <!-- 2. Objetivos con expandibles -->
+      <section class="slide" data-title="Objetivos">
+        <div class="slide-content">
+          <div class="slide-header">
+            <h1 class="slide-title">Objetivos del Curso</h1>
+            <p class="slide-subtitle">Al finalizar, podrás…</p>
+          </div>
+          <button class="expander" aria-expanded="false" aria-controls="obj1"><span>🎯 Comprender la Misión y Visión</span></button>
+          <div id="obj1" class="expander-content">
+            <div class="callout">Reconocerás cómo la misión y la visión orientan objetivos, métricas y decisiones del día a día.</div>
+          </div>
+
+          <button class="expander" aria-expanded="false" aria-controls="obj2"><span>📚 Aplicar Principios Bíblicos</span></button>
+          <div id="obj2" class="expander-content">
+            <div class="callout">Traducir principios universales en conductas observables: veracidad, justicia, servicio, diligencia y respeto.</div>
+          </div>
+
+          <button class="expander" aria-expanded="false" aria-controls="obj3"><span>⭐ Vivir los 5 Valores</span></button>
+          <div id="obj3" class="expander-content">
+            <ul>
+              <li><strong>Integridad:</strong> coherencia entre lo que pienso, digo y hago.</li>
+              <li><strong>Efectividad:</strong> logro con uso óptimo de recursos.</li>
+              <li><strong>Lealtad:</strong> compromiso con la cultura y las personas.</li>
+              <li><strong>Espíritu innovador:</strong> mejora continua y flexibilidad.</li>
+              <li><strong>Responsabilidad social y ambiental.</strong></li>
+            </ul>
+          </div>
+
+          <button class="expander" aria-expanded="false" aria-controls="obj4"><span>🌱 Generar Impacto Positivo</span></button>
+          <div id="obj4" class="expander-content">
+            <div class="callout">Conectar resultados del negocio con bienestar del colaborador, la familia y la comunidad.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Estructura con tabs -->
+      <section class="slide" data-title="Estructura">
+        <div class="slide-content">
+          <div class="slide-header">
+            <h1 class="slide-title">Estructura del Curso</h1>
+            <p class="slide-subtitle">Cinco módulos, evaluaciones y ensayo final</p>
+          </div>
+          <div class="tabs" role="tablist">
+            <button class="tab-btn active" data-tab="t1" role="tab">Módulos</button>
+            <button class="tab-btn" data-tab="t2" role="tab">Tiempo</button>
+            <button class="tab-btn" data-tab="t3" role="tab">Recomendaciones</button>
+          </div>
+          <div id="t1" class="tab-panel active">
+            <div class="timeline">
+              <div class="timeline-item"><div class="timeline-number">1</div><div><div class="timeline-title">Identidad Corporativa</div><p>Misión, Visión, Propósito (8 min)</p></div></div>
+              <div class="timeline-item"><div class="timeline-number">2</div><div><div class="timeline-title">Principios Bíblicos</div><p>Fundamento ético (10 min)</p></div></div>
+              <div class="timeline-item"><div class="timeline-number">3</div><div><div class="timeline-title">Integridad y Efectividad</div><p>Coherencia y resultados (12 min)</p></div></div>
+              <div class="timeline-item"><div class="timeline-number">4</div><div><div class="timeline-title">Lealtad e Innovación</div><p>Compromiso y mejora (12 min)</p></div></div>
+              <div class="timeline-item"><div class="timeline-number">5</div><div><div class="timeline-title">Responsabilidad Social</div><p>Impacto positivo (10 min)</p></div></div>
+            </div>
+          </div>
+          <div id="t2" class="tab-panel"><p>Duración total estimada: <strong>52 minutos</strong>. Evalúa al final para certificar tus conocimientos.</p></div>
+          <div id="t3" class="tab-panel"><ul style="text-align:left">
+            <li>Reserva un espacio sin interrupciones.</li>
+            <li>Toma notas de ideas para aplicar en tu área.</li>
+            <li>Marca dudas para consultarlas con tu líder.</li>
+          </ul></div>
+        </div>
+      </section>
+
+      <!-- 4. Identidad con expandibles y ejemplo -->
+      <section class="slide" data-title="Módulo 1">
+        <div class="slide-content">
+          <div class="slide-header"><div class="module-number">1</div><h1 class="slide-title">Nuestra Identidad Corporativa</h1><div class="module-duration">8 minutos</div></div>
+          <div class="values-grid">
+            <div class="value-card"><div class="value-title">MISIÓN</div><div class="value-description">Satisfacer necesidades con calidad, servicio y actitudes que honran a Dios, generando rentabilidad.</div></div>
+            <div class="value-card"><div class="value-title">VISIÓN</div><div class="value-description">Ser competitivos con dimensión internacional mediante equipos de alto rendimiento y excelencia.</div></div>
+          </div>
+          <button class="expander" aria-expanded="false" aria-controls="m1-more">Más información y ejemplo</button>
+          <div id="m1-more" class="expander-content">
+            <p><strong>Ejemplo:</strong> cuando definimos un nuevo KPI comercial, verificamos si el indicador promueve calidad real para el cliente y prácticas alineadas a nuestros valores.</p>
+            <div class="callout">Tip: conecta tu objetivo personal trimestral con al menos un indicador de misión/visión.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Principios bíblicos con expandibles -->
+      <section class="slide" data-title="Módulo 2">
+        <div class="slide-content">
+          <div class="slide-header"><div class="module-number">2</div><h1 class="slide-title">Principios Bíblicos</h1><div class="module-duration">10 minutos</div></div>
+          <button class="expander" aria-expanded="false" aria-controls="m2-por">¿Por qué son útiles?</button>
+          <div id="m2-por" class="expander-content"><ul><li>Decisiones sabias y consistentes.</li><li>Resultados sostenibles.</li><li>Ambiente predecible y de confianza.</li></ul></div>
+          <button class="expander" aria-expanded="false" aria-controls="m2-prac">¿Cómo se practican?</button>
+          <div id="m2-prac" class="expander-content"><ul><li>Veracidad en reportes y comunicación.</li><li>Justicia en procesos y reconocimientos.</li><li>Servicio y diligencia en tareas diarias.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- 6. Integridad/Efectividad con expandibles -->
+      <section class="slide" data-title="Módulo 3">
+        <div class="slide-content">
+          <div class="slide-header"><div class="module-number">3</div><h1 class="slide-title">Integridad y Efectividad</h1><div class="module-duration">12 minutos</div></div>
+          <div class="values-grid">
+            <div class="value-card"><div class="value-title">INTEGRIDAD</div><div class="value-description">Coherencia total. Se nota en: verdad, cumplir lo prometido, no disociar vida privada y pública, puntualidad.</div></div>
+            <div class="value-card"><div class="value-title">EFECTIVIDAD</div><div class="value-description">Logro de metas con foco y eficiencia. Se nota en: planificación, foco en resultados globales, productividad, gestión del tiempo.</div></div>
+          </div>
+          <button class="expander" aria-expanded="false" aria-controls="m3-casos">Ver casos prácticos</button>
+          <div id="m3-casos" class="expander-content">
+            <p><strong>Caso:</strong> Debes cerrar una venta que exige prometer un plazo incierto. ¿Qué harías?</p>
+            <ul><li>A) Prometer el plazo ideal para asegurar la venta.</li><li>B) Informar la fecha más realista y ofrecer alternativas.</li><li>C) Evitar responder hasta tener certeza.</li></ul>
+            <div class="callout">Respuesta recomendada: <strong>B</strong>, equilibra integridad (verdad) y efectividad (solución).</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Lealtad e Innovación con expandibles -->
+      <section class="slide" data-title="Módulo 4">
+        <div class="slide-content">
+          <div class="slide-header"><div class="module-number">4</div><h1 class="slide-title">Lealtad y Espíritu Innovador</h1><div class="module-duration">12 minutos</div></div>
+          <button class="expander" aria-expanded="false" aria-controls="m4-leal">Lealtad en acción</button>
+          <div id="m4-leal" class="expander-content"><ul><li>Sentido de pertenencia.</li><li>Resguardo de información sensible.</li><li>Respeto por personas y normas.</li></ul></div>
+          <button class="expander" aria-expanded="false" aria-controls="m4-inn">Innovación responsable</button>
+          <div id="m4-inn" class="expander-content"><ul><li>Creatividad con foco en el cliente.</li><li>Flexibilidad y aprendizaje continuo.</li><li>Salir de la zona de confort con métricas claras.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- 8. Responsabilidad Social con expandibles -->
+      <section class="slide" data-title="Módulo 5">
+        <div class="slide-content">
+          <div class="slide-header"><div class="module-number">5</div><h1 class="slide-title">Responsabilidad Social y Medioambiental</h1><div class="module-duration">10 minutos</div></div>
+          <button class="expander" aria-expanded="false" aria-controls="m5-social">Impacto social</button>
+          <div id="m5-social" class="expander-content"><ul><li>Desarrollo personal y comunitario.</li><li>Espíritu de servicio y empatía.</li><li>Cumplimiento de leyes y normas.</li></ul></div>
+          <button class="expander" aria-expanded="false" aria-controls="m5-ambiental">Cuidado ambiental</button>
+          <div id="m5-ambiental" class="expander-content"><ul><li>Gestión de residuos.</li><li>Prevención de contaminación.</li><li>Espacios saludables y seguros.</li></ul></div>
+        </div>
+      </section>
+
+      <!-- 9. Guía rápida (resumen accionable) -->
+      <section class="slide" data-title="Guía Rápida">
+        <div class="slide-content">
+          <div class="slide-header"><h1 class="slide-title">Guía Rápida de Aplicación</h1><p class="slide-subtitle">Checklist para el día a día</p></div>
+          <div class="values-grid">
+            <div class="value-card"><div class="value-title">Antes de decidir</div><div class="value-description">¿Es íntegro? ¿Aporta al resultado global? ¿Respeta personas y normas? ¿Mejora lo existente? ¿Impacta positivamente?</div></div>
+            <div class="value-card"><div class="value-title">En reuniones</div><div class="value-description">Acordá responsables/fechas. Registrá acuerdos. Hacé seguimiento semanal.</div></div>
+            <div class="value-card"><div class="value-title">Con clientes</div><div class="value-description">Prometé solo lo cumplible; ofrecé alternativas y comunicá con transparencia.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. Evaluación interactiva -->
+      <section class="slide" data-title="Evaluación" id="quizSlide">
+        <div class="slide-content">
+          <div class="slide-header"><h1 class="slide-title">Evaluación Interactiva</h1><p class="slide-subtitle">Necesitás <strong>85/100</strong> para aprobar. Podés reintentar.</p></div>
+          <div class="quiz" id="quiz">
+            <div class="quiz-head"><span class="badge" id="quizProgress">0/0</span><span class="badge" id="quizScore">0 pts</span></div>
+            <div id="quizBody" class="q-card">
+              <p class="muted">Cuando estés listo, hacé clic en <strong>Comenzar</strong>. Las preguntas aparecen con explicaciones al responder.</p>
+            </div>
+            <div class="q-actions">
+              <button class="pill" id="btnStart">Comenzar</button>
+              <button class="pill" id="btnNext" disabled>Siguiente</button>
+              <button class="pill" id="btnRetry" style="display:none">Reintentar</button>
+              <button class="pill" id="btnSave" title="Guardar avance local">Guardar</button>
+              <button class="pill" id="btnLoad" title="Cargar avance local">Cargar</button>
+            </div>
+            <div id="quizResult" class="result" style="display:none"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. Ensayo final (interactivo simple) -->
+      <section class="slide" data-title="Ensayo Final">
+        <div class="slide-content">
+          <div class="slide-header"><h1 class="slide-title">Ensayo Final</h1><p class="slide-subtitle">Tema: “Mi compromiso como embajador de los valores Chacomer”.</p></div>
+          <div class="module-card">
+            <p>Escribí un breve compromiso (5–7 líneas). No se envía a un servidor; queda en tu navegador para imprimir o copiar.</p>
+            <textarea id="essay" rows="6" style="width:100%;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(0,0,0,.25);color:#fff;padding:10px" placeholder="Escribí tu compromiso aquí…"></textarea>
+            <div class="q-actions"><button class="pill" id="btnSaveEssay">Guardar</button><button class="pill" id="btnClearEssay">Limpiar</button><button class="pill" id="btnPrint">Imprimir</button></div>
+            <p class="muted" id="essayStatus">Sin guardar</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. Cierre / Próximos pasos -->
+      <section class="slide" data-title="Cierre">
+        <div class="slide-content">
+          <div class="slide-header"><h1 class="slide-title">¡Gracias por completar el curso!</h1><p class="slide-subtitle">Próximos pasos</p></div>
+          <div class="timeline">
+            <div class="timeline-item"><div class="timeline-number">1</div><div><div class="timeline-title">Aplicación</div><p>Elegí 1 hábito del curso y practicálo por 2 semanas.</p></div></div>
+            <div class="timeline-item"><div class="timeline-number">2</div><div><div class="timeline-title">Conversación</div><p>Compartí un aprendizaje con tu líder y tu equipo.</p></div></div>
+            <div class="timeline-item"><div class="timeline-number">3</div><div><div class="timeline-title">Seguimiento</div><p>Medí el impacto (KPI) y traé evidencias a la próxima reunión.</p></div></div>
+          </div>
+          <div class="module-card"><h3 class="module-title">¿Querés volver al inicio?</h3><button class="nav-btn" id="homeBtn">↺ Volver al inicio</button></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Dot pager -->
+    <div class="dots" id="dots" aria-label="Navegación por páginas" role="tablist"></div>
+
+    <!-- Bottom navigation -->
+    <div class="navigation" aria-label="Controles de navegación">
+      <button class="nav-btn" id="prevBtn" aria-label="Anterior">← Anterior</button>
+      <button class="nav-btn" id="nextBtn" aria-label="Siguiente">Siguiente →</button>
+    </div>
+  </div>
+
+  <script>
+    // ======= Navegación, progreso, tabs, expanders =======
+    (function(){
+      let currentSlide = 0;
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const totalSlides = slides.length;
+      const currentEl = document.getElementById('currentSlide');
+      const totalEl = document.getElementById('totalSlides');
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const homeBtn = document.getElementById('homeBtn');
+      const dotsWrap = document.getElementById('dots');
+      const progressBar = document.getElementById('progressBar');
+      totalEl.textContent = totalSlides;
+
+      // Build dots
+      const dots = slides.map((_, i) => {
+        const d = document.createElement('button');
+        d.className = 'dot'; d.setAttribute('role','tab'); d.setAttribute('aria-label', 'Diapositiva ' + (i+1));
+        d.addEventListener('click', () => showSlide(i)); dotsWrap.appendChild(d); return d;
+      });
+
+      function updateProgress(){ progressBar.style.width = (((currentSlide+1)/totalSlides)*100) + '%'; }
+
+      function showSlide(n, {focus=true}={}){
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (n + totalSlides) % totalSlides;
+        slides[currentSlide].classList.add('active');
+        currentEl.textContent = currentSlide + 1;
+        prevBtn.disabled = currentSlide === 0; nextBtn.disabled = currentSlide === totalSlides - 1;
+        dots.forEach((dot,i)=>dot.classList.toggle('active', i===currentSlide));
+        updateProgress();
+        if(focus){ slides[currentSlide].setAttribute('tabindex','0'); slides[currentSlide].focus({ preventScroll:true }); }
+        if(homeBtn) homeBtn.style.display = currentSlide === totalSlides - 1 ? 'inline-block' : 'none';
+        location.hash = '#slide-' + (currentSlide + 1);
+        localStorage.setItem('chaco.slide', String(currentSlide));
+      }
+
+      function changeSlide(delta){ showSlide(currentSlide + delta); }
+
+      prevBtn.addEventListener('click', ()=>changeSlide(-1));
+      nextBtn.addEventListener('click', ()=>changeSlide(1));
+      if(homeBtn) homeBtn.addEventListener('click', ()=>showSlide(0));
+
+      document.addEventListener('keydown', (e)=>{
+        const tag = (e.target && e.target.tagName) || '';
+        if(tag==='INPUT' || tag==='TEXTAREA') return;
+        if(e.key==='ArrowRight' || e.key===' ') { e.preventDefault(); changeSlide(1);} 
+        else if(e.key==='ArrowLeft'){ e.preventDefault(); changeSlide(-1);} 
+        else if(e.key.toLowerCase()==='home'){ e.preventDefault(); showSlide(0);} 
+        else if(e.key.toLowerCase()==='end'){ e.preventDefault(); showSlide(totalSlides-1);} 
+      });
+
+      // Touch swipe
+      let sx=0, sy=0, touching=false; const TH=40;
+      document.addEventListener('touchstart', e=>{ const t=e.changedTouches[0]; sx=t.clientX; sy=t.clientY; touching=true; }, {passive:true});
+      document.addEventListener('touchend', e=>{ if(!touching) return; const t=e.changedTouches[0]; const dx=t.clientX-sx; const dy=t.clientY-sy; if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>TH){ if(dx<0) changeSlide(1); else changeSlide(-1); } touching=false; });
+
+      // Tabs
+      document.querySelectorAll('.tab-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const id = btn.dataset.tab; document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b===btn));
+          document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id===id));
+        });
+      });
+
+      // Expanders
+      document.querySelectorAll('.expander').forEach(btn=>{
+        btn.addEventListener('click', ()=>{ const ex = btn.getAttribute('aria-expanded')==='true'; btn.setAttribute('aria-expanded', String(!ex)); });
+      });
+
+      // Deep-link and restore slide
+      function openFromHash(){
+        const m = location.hash.match(/#slide-(\d+)/); let idx = 0;
+        if(m) idx = Math.min(Math.max(parseInt(m[1],10)-1,0), totalSlides-1);
+        else { const saved = parseInt(localStorage.getItem('chaco.slide')||'0',10); if(!Number.isNaN(saved)) idx = Math.min(Math.max(saved,0), totalSlides-1); }
+        showSlide(idx, {focus:false});
+      }
+      window.addEventListener('hashchange', openFromHash);
+      openFromHash();
+    })();
+
+    // ======= Banco de preguntas y lógica del quiz =======
+    (function(){
+      const bank = [
+        {m:1,q:'La misión y la visión sirven principalmente para…',choices:['Definir metas personales aisladas','Orientar decisiones y prioridades organizacionales','Sustituir políticas y procesos'],a:1,exp:'Misión/visión orientan qué priorizar, cómo medir y decidir.'},
+        {m:1,q:'Un KPI alineado a la visión debe…',choices:['Prometer resultados ideales aunque no sean realistas','Incentivar excelencia sostenible y medible','Enfocarse solo en costos'],a:1,exp:'La visión pide excelencia sostenible, con métricas claras.'},
+        {m:2,q:'Practicar principios bíblicos en la empresa implica…',choices:['Reservarse la verdad si conviene','Aplicar veracidad, justicia y servicio','Evitar dar feedback'],a:1,exp:'Veracidad + justicia + servicio traducen los principios a conducta.'},
+        {m:2,q:'¿Qué genera un ambiente de trabajo predecible?',choices:['Aplicar reglas universales coherentes','Imponer cambios sin comunicar','Priorizar el atajo'],a:0,exp:'Las reglas universales aplicadas consistentes generan previsibilidad.'},
+        {m:3,q:'Integridad significa…',choices:['Coherencia entre pensar, decir y hacer','Cumplir metas a cualquier costo','Evitar reportar errores'],a:0,exp:'Coherencia total; reportar errores es parte de esa coherencia.'},
+        {m:3,q:'Efectividad se demuestra cuando…',choices:['Planifico y priorizo para el resultado global','Hago muchas tareas a la vez sin foco','Trabajo más horas siempre'],a:0,exp:'Planificación y priorización orientadas a resultados globales.'},
+        {m:4,q:'La lealtad se ve en…',choices:['Compartir info sensible si ayuda a vender','Cuidar información y respetar normas','No cuestionar procesos jamás'],a:1,exp:'Lealtad implica resguardo de info y respeto a personas/normas.'},
+        {m:4,q:'Innovar responsablemente es…',choices:['Probar ideas sin medir impacto','Escuchar al cliente y medir mejoras','Evitar riesgos siempre'],a:1,exp:'Innovación = creatividad + escucha + métricas de mejora.'},
+        {m:5,q:'Responsabilidad social implica…',choices:['Solo cumplir la ley','Buscar impacto positivo en personas y comunidad','Delegar todo al Estado'],a:1,exp:'Se busca impacto real en personas/comunidad, además de la ley.'},
+        {m:5,q:'Cuidado ambiental efectivo es…',choices:['Tirar residuos con rapidez','Clasificar y tratar residuos adecuadamente','Limpiar solo si hay inspección'],a:1,exp:'Gestión responsable de residuos y prevención de contaminación.'},
+        {m:3,q:'Caso: ante un plazo incierto para un cliente, lo correcto es…',choices:['Prometer el mejor plazo posible','Ser transparente y ofrecer alternativas','Evitar responder hasta último momento'],a:1,exp:'Transparencia + alternativas = integridad + efectividad.'},
+        {m:2,q:'Una práctica alineada a principios es…',choices:['Ocultar un error menor','Reportar hallazgos y corregir','Eludir controles cuando urja'],a:1,exp:'Reportar y corregir materializa los principios.'}
+      ];
+
+      // Selección aleatoria de 10 preguntas
+      function pickQuestions(n=10){
+        const arr=[...bank];
+        for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+        return arr.slice(0,n);
+      }
+
+      const elQuiz = document.getElementById('quiz');
+      if(!elQuiz) return;
+      const elBody = document.getElementById('quizBody');
+      const elProg = document.getElementById('quizProgress');
+      const elScore = document.getElementById('quizScore');
+      const elResult = document.getElementById('quizResult');
+      const btnStart = document.getElementById('btnStart');
+      const btnNext = document.getElementById('btnNext');
+      const btnRetry = document.getElementById('btnRetry');
+      const btnSave = document.getElementById('btnSave');
+      const btnLoad = document.getElementById('btnLoad');
+
+      let questions = [], idx = 0, score = 0, answered = false;
+
+      function render(){
+        elProg.textContent = (idx) + '/' + questions.length;
+        elScore.textContent = score + ' pts';
+      }
+
+      function renderQuestion(){
+        const q = questions[idx];
+        elBody.innerHTML = '';
+        const title = document.createElement('div');
+        title.className='q-title';
+        title.textContent = q.q;
+        const list = document.createElement('div'); list.className='choices';
+        q.choices.forEach((c,i)=>{
+          const opt = document.createElement('div'); opt.className='choice'; opt.setAttribute('role','button'); opt.setAttribute('tabindex','0'); opt.textContent = c;
+          opt.addEventListener('click', ()=> select(i));
+          opt.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ e.preventDefault(); select(i); } });
+          list.appendChild(opt);
+        });
+        const explain = document.createElement('div'); explain.className='explain'; explain.id='explain';
+        elBody.appendChild(title); elBody.appendChild(list); elBody.appendChild(explain);
+        btnNext.disabled = true; answered=false;
+        render();
+      }
+
+      function select(i){
+        if(answered) return; answered=true;
+        const q = questions[idx]; const choices = elBody.querySelectorAll('.choice');
+        choices.forEach((el,k)=>{ el.classList.add(k===q.a? 'correct':'incorrect'); el.style.cursor='default'; });
+        if(i===q.a) score += 10;
+        document.getElementById('explain').textContent = q.exp;
+        btnNext.disabled = false;
+        render();
+      }
+
+      function finish(){
+        elBody.innerHTML = '<div class="q-title">¡Evaluación finalizada!</div><p>Tu puntaje total es <strong>'+score+'/100</strong>.</p>';
+        elProg.textContent = questions.length + '/' + questions.length;
+        elScore.textContent = score + ' pts';
+        elResult.style.display='block';
+        const ok = score >= 85;
+        elResult.className = 'result ' + (ok? 'success':'fail');
+        elResult.innerHTML = ok ? '<strong>¡Aprobado!</strong> Superaste el mínimo de 85. Podés imprimir o guardar tu evidencia.' : '<strong>No alcanzaste 85.</strong> Podés reintentar para mejorar tu puntaje.';
+        btnRetry.style.display='inline-block';
+        btnNext.disabled = true;
+        saveState();
+      }
+
+      function next(){
+        if(idx < questions.length - 1){ idx++; renderQuestion(); }
+        else { finish(); }
+      }
+
+      function start(){ questions = pickQuestions(10); idx=0; score=0; elResult.style.display='none'; btnRetry.style.display='none'; renderQuestion(); }
+      function retry(){ start(); }
+
+      // Persistencia local
+      function saveState(){
+        const data = { questions, idx, score, done: idx>=questions.length-1, ts: Date.now() };
+        localStorage.setItem('chaco.quiz', JSON.stringify(data));
+      }
+      function loadState(){
+        try{
+          const raw = localStorage.getItem('chaco.quiz'); if(!raw) return false;
+          const data = JSON.parse(raw);
+          if(!data || !Array.isArray(data.questions)) return false;
+          questions = data.questions; idx = data.idx; score = data.score;
+          if(data.done){ finish(); } else { renderQuestion(); }
+          return true;
+        }catch{ return false; }
+      }
+
+      btnStart.addEventListener('click', start);
+      btnNext.addEventListener('click', next);
+      btnRetry.addEventListener('click', retry);
+      btnSave.addEventListener('click', saveState);
+      btnLoad.addEventListener('click', ()=>{ if(!loadState()) { elResult.style.display='block'; elResult.className='result fail'; elResult.textContent='No se encontró un avance guardado.'; }});
+
+      // Intentar cargar estado previo automáticamente
+      loadState();
+    })();
+
+    // ======= Ensayo: guardado e impresión =======
+    (function(){
+      const ta = document.getElementById('essay'); if(!ta) return;
+      const st = document.getElementById('essayStatus');
+      const bS = document.getElementById('btnSaveEssay');
+      const bC = document.getElementById('btnClearEssay');
+      const bP = document.getElementById('btnPrint');
+      const KEY = 'chaco.essay';
+
+      function save(){ localStorage.setItem(KEY, ta.value||''); st.textContent = 'Guardado ✔'; }
+      function load(){ const v = localStorage.getItem(KEY)||''; ta.value = v; st.textContent = v? 'Cargado de guardado local' : 'Sin guardar'; }
+      function clear(){ ta.value=''; save(); }
+
+      bS.addEventListener('click', save);
+      bC.addEventListener('click', clear);
+      bP.addEventListener('click', ()=>window.print());
+      load();
+    })();
+  </script>
+</body>
+</html>
